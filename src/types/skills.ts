@@ -45,3 +45,8 @@ export interface ReferenceFile {
   path: string;
   content: string;
 }
+
+export interface EditorInfo {
+  id: string;
+  label: string;
+}

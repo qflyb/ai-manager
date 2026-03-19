@@ -37,14 +37,17 @@ export default function SkillDetailPage() {
       : "/skills";
 
   return (
-    <div className="p-8">
-      <button
-        onClick={() => navigate(backPath)}
-        className="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </button>
+    <div>
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-100 px-8 py-3">
+        <button
+          onClick={() => navigate(backPath)}
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </button>
+      </div>
+      <div className="p-8">
 
       {loading && <LoadingSpinner text="Loading skill content..." />}
       {error && (
@@ -164,6 +167,7 @@ export default function SkillDetailPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

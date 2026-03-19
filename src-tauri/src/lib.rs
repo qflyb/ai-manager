@@ -13,6 +13,8 @@ pub fn run() {
             skills::commands::remove_skill,
             skills::commands::toggle_skill,
             skills::commands::read_config_file,
+            skills::commands::detect_editors,
+            skills::commands::open_in_editor,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

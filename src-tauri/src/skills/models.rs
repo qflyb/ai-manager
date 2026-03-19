@@ -51,3 +51,9 @@ pub struct ReferenceFile {
     pub path: String,
     pub content: String,
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct EditorInfo {
+    pub id: String,
+    pub label: String,
+}

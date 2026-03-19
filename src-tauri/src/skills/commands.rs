@@ -389,3 +389,76 @@ pub fn read_config_file(file_path: String) -> Result<String, String> {
     fs::read_to_string(&file_path)
         .map_err(|e| format!("Failed to read config file: {}", e))
 }
+
+fn is_command_available(cmd: &str) -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("where")
+            .arg(cmd)
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        std::process::Command::new("which")
+            .arg(cmd)
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+}
+
+#[tauri::command]
+pub fn detect_editors() -> Vec<EditorInfo> {
+    let known_editors = vec![
+        ("code", "VSCode"),
+        ("code-insiders", "VSCode Insiders"),
+        ("cursor", "Cursor"),
+        ("windsurf", "Windsurf"),
+        ("zed", "Zed"),
+        ("webstorm", "WebStorm"),
+        ("idea", "IntelliJ IDEA"),
+        ("fleet", "Fleet"),
+        ("subl", "Sublime Text"),
+        ("atom", "Atom"),
+        ("notepad++", "Notepad++"),
+        ("nvim", "Neovim"),
+        ("vim", "Vim"),
+        ("antigravity", "Antigravity"),
+    ];
+
+    known_editors
+        .into_iter()
+        .filter(|(cmd, _)| is_command_available(cmd))
+        .map(|(cmd, label)| EditorInfo {
+            id: cmd.to_string(),
+            label: label.to_string(),
+        })
+        .collect()
+}
+
+#[tauri::command]
+pub fn open_in_editor(file_path: String, editor: String) -> Result<(), String> {
+    let path = Path::new(&file_path);
+    if !path.exists() {
+        return Err(format!("File not found: {}", file_path));
+    }
+
+    std::process::Command::new(&editor)
+        .arg(&file_path)
+        .spawn()
+        .map(|_| ())
+        .map_err(|e| {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                format!("Editor '{}' not found in PATH.", editor)
+            } else {
+                format!("Failed to open editor: {}", e)
+            }
+        })
+}

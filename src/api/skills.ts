@@ -1,4 +1,4 @@
-import type { AiTool, Skill, SkillContent } from "../types/skills";
+import type { AiTool, Skill, SkillContent, EditorInfo } from "../types/skills";
 
 async function tauriInvoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   if (!(window as any).__TAURI_INTERNALS__) {
@@ -50,4 +50,15 @@ export async function toggleSkill(
 
 export async function readConfigFile(filePath: string): Promise<string> {
   return tauriInvoke<string>("read_config_file", { filePath });
+}
+
+export async function detectEditors(): Promise<EditorInfo[]> {
+  return tauriInvoke<EditorInfo[]>("detect_editors");
+}
+
+export async function openInEditor(
+  filePath: string,
+  editor: string
+): Promise<void> {
+  return tauriInvoke("open_in_editor", { filePath, editor });
 }

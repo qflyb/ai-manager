@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { BrainCircuit, Plug, FileText } from "lucide-react";
+import { BrainCircuit, Puzzle, Plug, FileText } from "lucide-react";
 
 const features = [
   {
@@ -9,6 +9,15 @@ const features = [
     icon: BrainCircuit,
     path: "/skills",
     color: "bg-indigo-50 text-indigo-600",
+    ready: true,
+  },
+  {
+    id: "plugins",
+    name: "Plugins",
+    description: "Manage Claude Code compatible plugins from local or GitHub",
+    icon: Puzzle,
+    path: "/plugins",
+    color: "bg-violet-50 text-violet-600",
     ready: true,
   },
   {

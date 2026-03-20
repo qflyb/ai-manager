@@ -30,3 +30,4 @@ Full architecture, tech stack, data models, and API reference: `docs/ai-skills-m
 7. The app uses Hash Router; all routes must be anchored under `/#/`.
 8. New Tauri commands must be registered in `src-tauri/src/lib.rs` and wrapped in `src/api/skills.ts`.
 9. `installed_in` field on `Skill` is only populated for hub skills; do not rely on it for tool-local skills.
+10. Each file must not exceed 1000 lines of code; if a file would exceed this limit, split it into smaller, logically cohesive modules.

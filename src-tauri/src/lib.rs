@@ -1,4 +1,5 @@
 mod cache;
+mod plugins;
 mod skills;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -21,6 +22,18 @@ pub fn run() {
             cache::commands::get_cache_info,
             cache::commands::clear_tool_cache,
             cache::commands::clear_all_caches,
+            plugins::commands::add_plugin_local,
+            plugins::commands::add_plugin_github,
+            plugins::commands::list_plugins,
+            plugins::commands::remove_plugin,
+            plugins::commands::update_plugin,
+            plugins::commands::list_plugin_contents,
+            plugins::commands::install_plugin_skill,
+            plugins::commands::install_plugin_skill_to_all,
+            plugins::commands::install_plugin_command,
+            plugins::commands::install_plugin_command_to_all,
+            plugins::commands::remove_plugin_skill,
+            plugins::commands::remove_plugin_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

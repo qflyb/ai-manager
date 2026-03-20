@@ -8,6 +8,8 @@ import ToolDetailPage from "./pages/skills/ToolDetailPage";
 import SkillDetailPage from "./pages/skills/SkillDetailPage";
 import HubPage from "./pages/skills/HubPage";
 import BySkillPage from "./pages/skills/BySkillPage";
+import PluginsPage from "./pages/plugins/PluginsPage";
+import PluginDetailPage from "./pages/plugins/PluginDetailPage";
 import Settings from "./pages/Settings";
 import CacheManagement from "./pages/CacheManagement";
 import "./App.css";
@@ -27,6 +29,8 @@ const router = createHashRouter([
       { path: "skills/by-skill", element: <BySkillPage /> },
       { path: "skills/hub", element: <HubPage /> },
       { path: "skills/hub/:skillName", element: <SkillDetailPage /> },
+      { path: "plugins", element: <PluginsPage /> },
+      { path: "plugins/:pluginId", element: <PluginDetailPage /> },
       { path: "settings", element: <Settings /> },
       { path: "settings/cache", element: <CacheManagement /> },
     ],

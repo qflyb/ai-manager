@@ -17,12 +17,12 @@ AI Skills Manager is the core module of the ai-manager desktop application. It p
 
 ### Tools with Skills Support
 
-| Tool | Config Directory | Skills Directory | Config Files |
-|------|-----------------|-----------------|--------------|
-| Claude Code | `~/.claude/` | `skills/` | `settings.json`, `CLAUDE.md` |
-| Codex (OpenAI) | `~/.codex/` | `skills/.system/` | `config.toml`, `AGENTS.md` |
-| Google Gemini | `~/.gemini/` | `skills/` | `settings.json`, `GEMINI.md` |
-| GitHub Copilot | `~/.copilot/` | `skills/` | - |
+| Tool | Config Directory | Skills Directory | Commands/Prompts Directory | Config Files |
+|------|-----------------|-----------------|----------------------------|--------------|
+| Claude Code | `~/.claude/` | `skills/` | `commands/` | `settings.json`, `CLAUDE.md` |
+| Codex (OpenAI) | `~/.codex/` | `skills/.system/` | `prompts/` | `config.toml`, `AGENTS.md` |
+| Google Gemini | `~/.gemini/` | `skills/` | - | `settings.json`, `GEMINI.md` |
+| GitHub Copilot | `~/.copilot/` | `skills/` | - | - |
 
 ### Config-Only Tools
 
@@ -181,8 +181,11 @@ The app uses a modular routing design to support future modules such as `/mcp/` 
 | `remove_skill_from_all` | `skill_name` | `()` | Remove skill from all tools at once (best-effort) |
 | `toggle_skill` | `tool_id`, `skill_name`, `enabled` | `()` | Enable/disable (rename with `.disabled-` prefix) |
 | `read_config_file` | `file_path` | `String` | Read config file contents |
+| `list_commands` | `tool_id` | `Vec<CommandInfo>` | List command or prompt files for a supported tool |
+| `read_command_file` | `file_path` | `String` | Read a command or prompt file |
 | `detect_editors` | - | `Vec<EditorInfo>` | Detect available code editors in PATH |
 | `open_in_editor` | `file_path`, `editor` | `()` | Open file in specified editor |
+| `remove_command` | `tool_id`, `command_file` | `()` | Remove a command or prompt file from a supported tool |
 
 ## Data Models
 
@@ -195,6 +198,7 @@ interface AiTool {
   config_dir: string;      // Absolute path to config directory
   capability: "skills" | "config-only" | "detected-only";
   skills_dir: string | null;
+  commands_dir: string | null;
   config_files: ConfigFile[];
   skill_count: number;
   detected: boolean;       // Whether the directory exists

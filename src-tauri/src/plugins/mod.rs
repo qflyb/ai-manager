@@ -1,3 +1,4 @@
+pub mod command_targets;
 pub mod commands;
 pub mod github;
 pub mod marketplace;

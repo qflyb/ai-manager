@@ -55,7 +55,7 @@ pub fn get_tool_registry() -> Vec<ToolEntry> {
                 name: "Codex (OpenAI)",
                 capability: "skills",
                 skills_subdir: Some("skills"),
-                commands_subdir: None,
+                commands_subdir: Some("prompts"),
                 config_files: &[("config.toml", "toml"), ("AGENTS.md", "markdown")],
             },
             dir_resolver: || home_relative(".codex"),
@@ -176,4 +176,20 @@ pub fn get_tool_registry() -> Vec<ToolEntry> {
 
 pub fn get_hub_dir() -> Option<PathBuf> {
     dirs::home_dir().map(|h| h.join(".agents").join("skills"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn registry_maps_codex_commands_to_prompts_directory() {
+        let registry = get_tool_registry();
+        let codex_entry = registry
+            .into_iter()
+            .find(|entry| entry.def.id == "codex")
+            .expect("codex should be present in tool registry");
+
+        assert_eq!(codex_entry.def.commands_subdir, Some("prompts"));
+    }
 }

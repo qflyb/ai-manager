@@ -32,9 +32,7 @@ export default function PluginInstallDialog({
     if (filterType === "skills") {
       return t.capability === "skills" && t.detected;
     }
-    // For commands, only show tools that have commands support
-    // Currently only Claude Code, but filter by detected
-    return t.detected;
+    return t.detected && t.commands_dir !== null;
   });
 
   const handleInstall = async (toolId: string) => {

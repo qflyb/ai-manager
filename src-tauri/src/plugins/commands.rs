@@ -1,3 +1,4 @@
+use crate::plugins::command_targets::collect_tool_commands_dirs;
 use crate::plugins::github;
 use crate::plugins::models::*;
 use crate::plugins::storage;
@@ -392,7 +393,7 @@ fn resolve_tool_commands_dir(tool_id: &str) -> Result<PathBuf, InstallOperationE
     if !commands_dir.exists() {
         fs::create_dir_all(&commands_dir).map_err(|error| {
             InstallOperationError::message(format!(
-                "Failed to create commands directory: {}",
+                "Failed to create command/prompt directory: {}",
                 error
             ))
         })?;
@@ -423,7 +424,7 @@ fn install_plugin_command_to_commands_dir(
     if !commands_dir.exists() {
         fs::create_dir_all(commands_dir).map_err(|error| {
             InstallOperationError::message(format!(
-                "Failed to create commands directory: {}",
+                "Failed to create command/prompt directory: {}",
                 error
             ))
         })?;
@@ -438,21 +439,6 @@ fn collect_tool_skills_dirs() -> Vec<(String, PathBuf)> {
         .iter()
         .filter_map(|entry| {
             let subdir = entry.def.skills_subdir?;
-            let config_dir = (entry.dir_resolver)()?;
-            if !config_dir.exists() {
-                return None;
-            }
-
-            Some((entry.def.name.to_string(), config_dir.join(subdir)))
-        })
-        .collect()
-}
-
-fn collect_tool_commands_dirs() -> Vec<(String, PathBuf)> {
-    registry::get_tool_registry()
-        .iter()
-        .filter_map(|entry| {
-            let subdir = entry.def.commands_subdir?;
             let config_dir = (entry.dir_resolver)()?;
             if !config_dir.exists() {
                 return None;

@@ -210,9 +210,10 @@ Commands are slash command `.md` files that live in a plugin's `commands/` direc
 | Tool | Commands Directory |
 |------|-------------------|
 | Claude Code | `~/.claude/commands/` |
-| Other tools | Not supported yet (`commands_subdir: None`) |
+| Codex (OpenAI) | `~/.codex/prompts/` |
+| Other tools | Not supported by the current Markdown install model (`commands_subdir: None`) |
 
-Command files are symlinked (file symlinks, not directory symlinks) from the plugin source to the tool's commands directory. On Windows, file symlinks require Developer Mode or administrator privileges.
+Command files are symlinked (file symlinks, not directory symlinks) from the plugin source to the tool's command or prompt directory. On Windows, file symlinks require Developer Mode or administrator privileges.
 
 ## Installation Mechanism
 
@@ -226,7 +227,7 @@ Skills are **directory symlinks** from the plugin's `skills/{skill-name}/` to th
 
 ### Commands
 
-Commands are **file symlinks** from the plugin's `commands/{name}.md` to the target tool's commands directory.
+Commands are **file symlinks** from the plugin's `commands/{name}.md` to the target tool's command or prompt directory.
 
 - Uses the new `create_file_symlink` function in `fs_utils.rs`
 - Windows uses `symlink_file()`, Unix uses `symlink()`
@@ -383,5 +384,5 @@ interface PluginCommandInfo {
 - Git must be installed for GitHub plugin support; the app checks availability and shows a clear error if missing.
 - File symlinks on Windows require Developer Mode or administrator privileges, same as directory symlinks. If the normal install attempt hits the Windows symlink privilege error, the app automatically retries the plugin install action through a UAC prompt.
 - When removing a plugin, already-installed skills/commands remain in their target tools; only the registry entry and cloned repo are removed.
-- The `commands_subdir` field is currently only set for Claude Code; other tools can be extended as they add commands support.
+- The `commands_subdir` field is currently set for Claude Code (`commands/`) and Codex (`prompts/`). Other tools can be added only when they expose a compatible Markdown-based target directory.
 - Install status detection works by comparing canonical paths of symlinks in tool directories against the plugin source paths.

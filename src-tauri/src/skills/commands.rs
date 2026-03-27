@@ -914,6 +914,21 @@ mod tests {
     }
 
     #[test]
+    fn scan_ai_tools_reports_command_dirs_for_supported_tools() {
+        let tools = scan_ai_tools().expect("scan should succeed");
+
+        for tool_id in ["claude", "codex"] {
+            let tool = tools
+                .iter()
+                .find(|tool| tool.id == tool_id)
+                .expect("supported tool should be present");
+            if tool.detected {
+                assert!(tool.commands_dir.is_some());
+            }
+        }
+    }
+
+    #[test]
     fn remove_command_from_dir_removes_regular_markdown_file() {
         let base_dir = test_dir("remove-command-file");
         let commands_dir = base_dir.join("commands");
@@ -959,8 +974,8 @@ mod tests {
 
     #[test]
     fn remove_command_rejects_unsupported_tool() {
-        let error = remove_command("codex".to_string(), "hello.md".to_string())
-            .expect_err("codex should not support commands");
+        let error = remove_command("gemini".to_string(), "hello.md".to_string())
+            .expect_err("gemini should not support commands");
 
         assert!(error.contains("does not support commands"));
     }

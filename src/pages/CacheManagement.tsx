@@ -11,6 +11,7 @@ import { useCacheInfo } from "../hooks/useCacheInfo";
 import * as api from "../api/cache";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import Badge from "../components/ui/Badge";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 B";
@@ -21,10 +22,19 @@ function formatBytes(bytes: number): string {
   return `${value < 10 ? value.toFixed(2) : value < 100 ? value.toFixed(1) : Math.round(value)} ${units[i]}`;
 }
 
+interface PendingClear {
+  type: "tool" | "all";
+  toolId?: string;
+  toolName?: string;
+  size: number;
+}
+
 export default function CacheManagement() {
   const { cacheInfos, loading, error, refetch } = useCacheInfo();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [clearing, setClearing] = useState<string | null>(null);
+  const [clearError, setClearError] = useState<string | null>(null);
+  const [pendingClear, setPendingClear] = useState<PendingClear | null>(null);
 
   const totalSize = cacheInfos.reduce((sum, t) => sum + t.cache_size_bytes, 0);
   const hasAnyCacheData = cacheInfos.some((t) => t.has_cache);
@@ -38,52 +48,56 @@ export default function CacheManagement() {
     });
   };
 
-  const handleClearTool = async (toolId: string, toolName: string, size: number) => {
-    if (
-      !confirm(
-        `Clear all conversation cache for ${toolName}?\nThis will free approximately ${formatBytes(size)}.`
-      )
-    )
-      return;
+  const handleClearTool = (toolId: string, toolName: string, size: number) => {
+    setPendingClear({ type: "tool", toolId, toolName, size });
+  };
 
-    setClearing(toolId);
+  const handleClearAll = () => {
+    setPendingClear({ type: "all", size: totalSize });
+  };
+
+  const executeClear = async () => {
+    if (!pendingClear) return;
+    setPendingClear(null);
+    setClearError(null);
+
+    const clearingId = pendingClear.type === "all" ? "__all__" : pendingClear.toolId!;
+    setClearing(clearingId);
     try {
-      const result = await api.clearToolCache(toolId);
+      const result =
+        pendingClear.type === "all"
+          ? await api.clearAllCaches()
+          : await api.clearToolCache(pendingClear.toolId!);
       if (result.errors.length > 0) {
-        alert(`Cleared ${formatBytes(result.freed_bytes)}, but some errors occurred:\n${result.errors.join("\n")}`);
+        setClearError(
+          `Cleared ${formatBytes(result.freed_bytes)}, but some errors occurred:\n${result.errors.join("\n")}`
+        );
       }
       refetch();
     } catch (err) {
-      alert(String(err));
+      setClearError(String(err));
     } finally {
       setClearing(null);
     }
   };
 
-  const handleClearAll = async () => {
-    if (
-      !confirm(
-        `Clear conversation caches for all AI tools?\nThis will free approximately ${formatBytes(totalSize)}.`
-      )
-    )
-      return;
-
-    setClearing("__all__");
-    try {
-      const result = await api.clearAllCaches();
-      if (result.errors.length > 0) {
-        alert(`Cleared ${formatBytes(result.freed_bytes)}, but some errors occurred:\n${result.errors.join("\n")}`);
-      }
-      refetch();
-    } catch (err) {
-      alert(String(err));
-    } finally {
-      setClearing(null);
-    }
-  };
+  const confirmMessage =
+    pendingClear?.type === "all"
+      ? `Clear conversation caches for all AI tools?\nThis will free approximately ${formatBytes(pendingClear.size)}.`
+      : `Clear all conversation cache for ${pendingClear?.toolName}?\nThis will free approximately ${formatBytes(pendingClear?.size ?? 0)}.`;
 
   return (
     <div className="p-8">
+      {pendingClear && (
+        <ConfirmDialog
+          title="Clear Cache"
+          message={confirmMessage}
+          confirmLabel="Clear"
+          onConfirm={executeClear}
+          onCancel={() => setPendingClear(null)}
+        />
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Conversation Cache</h1>
@@ -103,9 +117,9 @@ export default function CacheManagement() {
 
       {loading && <LoadingSpinner text="Scanning conversation caches..." />}
 
-      {error && (
-        <div className="mt-6 rounded-lg bg-red-50 p-4 text-sm text-red-600">
-          {error}
+      {(error || clearError) && (
+        <div className="mt-6 rounded-lg bg-red-50 p-4 text-sm text-red-600 whitespace-pre-line">
+          {error ?? clearError}
         </div>
       )}
 

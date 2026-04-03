@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useSkillsStore } from "../../store/useSkillsStore";
 import { useAiTools } from "../../hooks/useAiTools";
 import SkillCard from "../../components/skills/SkillCard";
@@ -66,13 +66,11 @@ export default function HubPage() {
         </div>
       )}
 
-      <div className="mt-6 space-y-3">
+      <div className="mt-6 grid grid-cols-[1fr_auto] items-start gap-x-2 gap-y-3">
         {filtered.map((skill) => (
-          <div key={skill.dir_name} className="flex items-start gap-2">
-            <div className="flex-1">
-              <SkillCard skill={skill} basePath="/skills/hub" />
-            </div>
-            <div className="pt-3">
+          <Fragment key={skill.dir_name}>
+            <SkillCard skill={skill} basePath="/skills/hub" />
+            <div className="self-start pt-3">
               <button
                 onClick={() => setInstallTarget(skill.dir_name)}
                 className="flex items-center gap-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700"
@@ -81,7 +79,7 @@ export default function HubPage() {
                 Install
               </button>
             </div>
-          </div>
+          </Fragment>
         ))}
       </div>
 

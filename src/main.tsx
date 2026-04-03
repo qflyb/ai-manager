@@ -14,6 +14,10 @@ import Settings from "./pages/Settings";
 import CacheManagement from "./pages/CacheManagement";
 import "./App.css";
 
+if (import.meta.env.DEV) {
+  import("react-grab");
+}
+
 const router = createHashRouter([
   {
     path: "/",

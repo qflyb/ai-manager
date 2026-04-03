@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useAiTools } from "../../hooks/useAiTools";
 import { useSkills } from "../../hooks/useSkills";
 import { useCommands } from "../../hooks/useCommands";
@@ -123,16 +123,13 @@ export default function ToolDetailPage() {
             />
           )}
 
-          <div className="space-y-3">
+          <div className="grid grid-cols-[1fr_auto] items-start gap-x-2 gap-y-3">
             {filtered.map((skill) => (
-              <div
-                key={skill.dir_name}
-                className={`flex items-start gap-2 ${skill.disabled ? "opacity-50" : ""}`}
-              >
-                <div className="flex-1">
+              <Fragment key={skill.dir_name}>
+                <div className={skill.disabled ? "opacity-50" : ""}>
                   <SkillCard skill={skill} toolId={toolId} />
                 </div>
-                <div className="pt-3">
+                <div className={`self-start pt-3 ${skill.disabled ? "opacity-50" : ""}`}>
                   <SkillActions
                     toolId={toolId!}
                     skillName={skill.dir_name}
@@ -141,7 +138,7 @@ export default function ToolDetailPage() {
                     onComplete={refetch}
                   />
                 </div>
-              </div>
+              </Fragment>
             ))}
           </div>
         </div>

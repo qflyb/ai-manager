@@ -49,7 +49,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
         )}
       </div>
 
-      <div className="mt-3 flex items-center gap-1 text-xs text-gray-400">
+      <div className="mt-3 flex w-full items-center gap-1 overflow-hidden text-xs text-gray-400">
         <FolderOpen className="h-3 w-3" />
         <span className="truncate">{tool.config_dir}</span>
       </div>
